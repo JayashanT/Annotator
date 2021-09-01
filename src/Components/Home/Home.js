@@ -6,23 +6,61 @@ import { Formik, Form, Field, FieldArray } from 'formik';
 const { TextArea, } = Input;
 
 const Home = () => {
-    const [value, setValue] = React.useState('non-racist');
-    const [score, setScore] = React.useState('default');
 
-    const onChange = e => {
-        console.log('radio checked', e.target.value);
-        setValue(e.target.value);
-    }
+    const data=[
+        {
+            "content": "1@AEHarrod @acesnead @JamieGlazov @diana_west_ Thanks for the retweet, I appreciate you getting the message out. Solidarity! \u270a\ud83c\udffd#BlackLivesMatter #DefundThePolice",
+            "id": "1.27E+18",
+            "Label": "default",
+            "Hate_level": "default"
+        },
+        {
+            "content": "2@AEHarrod @acesnead @JamieGlazov @diana_west_ Thanks for the retweet, I appreciate you getting the message out. Solidarity! \u270a\ud83c\udffd#BlackLivesMatter #DefundThePolice",
+            "id": "1.27E+18",
+            "Label": "default",
+            "Hate_level": "default" 
+        },
+        {
+            "content": "3@AEHarrod @acesnead @JamieGlazov @diana_west_ Thanks for the retweet, I appreciate you getting the message out. Solidarity! \u270a\ud83c\udffd#BlackLivesMatter #DefundThePolice",
+            "id": "1.27E+18",
+            "Label": "default",
+            "Hate_level": "default" 
+        },
+        {
+            "content": "4@AEHarrod @acesnead @JamieGlazov @diana_west_ Thanks for the retweet, I appreciate you getting the message out. Solidarity! \u270a\ud83c\udffd#BlackLivesMatter #DefundThePolice",
+            "id": "1.27E+18",
+            "Label": "default",
+            "Hate_level": "default"
+        },
+        {
+            "content": "5@AEHarrod @acesnead @JamieGlazov @diana_west_ Thanks for the retweet, I appreciate you getting the message out. Solidarity! \u270a\ud83c\udffd#BlackLivesMatter #DefundThePolice",
+            "id": "1.27E+18",
+            "Label": "default",
+            "Hate_level": "default"
+        },
+    ]
 
-    function handleButtonClick(e) {
-        // message.info('Click on left button.');
-        console.log('click left button', e);
-    }
+    const [randomArray,setRandomArray]=React.useState([]);
+    const a=0;
+    const array=[1,2]
+    
+    React.useEffect(()=>{
+        setRandomArray([])
+        for(var i=0;i<25;i++){
+             setRandomArray(randomArray=>randomArray.concat(Math.floor(Math.random() * (data.length-1)) + 1));
+        }
+        
+    },[a]);
 
-    function handleMenuClick(e) {
-        // message.info('Click on menu item.');
-        console.log('click', e);
-    }
+    function validateText(value) {
+        let error;
+        if (!value) {
+          error = 'Required';
+        }
+        return error;
+      }
+    
+
 
     return (<div>
         <header style={{ textAlign: 'center', fontWeight: 'bold', backgroundColor: 'blue', color: 'white', }}>
@@ -31,11 +69,11 @@ const Home = () => {
 
         <Formik
             initialValues={{
-                tweets:[1,2,3,4]
+                tweets:data
 
             }}
             onSubmit={values => {
-
+               alert(values?.tweets)
             }
             }
             enableReinitialize>
@@ -43,28 +81,36 @@ const Home = () => {
                 values,
                 handleSubmit,
                 handleReset,
-                setFieldValue
+                setFieldValue,
+                errors, touched, isValidating,isValid,
+                dirty
             }) => (
                 <Form onSubmit={handleSubmit}>
+
+                        <div style={{marginTop:'5px',marginLeft:'15px'}}>
+
+                            <Row><Field prefix="Name" name='name' placeholder="Name" validate={validateText}/>  {errors.name && touched.name && <div style={{color:'red',fontWeight:'bold'}}>{errors.name}</div>}</Row>
+                            <Row><Field prefix="" name='race' placeholder="Race" validate={validateText}/>{errors.race && touched.race && <div style={{color:'red',fontWeight:'bold'}}>{errors.race}</div>}</Row>
+                            <Row><Field prefix="" name='religion' placeholder="Religion" validate={validateText}/>{errors.religion && touched.religion && <div style={{color:'red',fontWeight:'bold'}}>{errors.religion}</div>}</Row>
+                        </div>
+
                     <FieldArray
                     name='tweets'
                     render={arryHelpers=>(
                     <div>
-                        {values.tweets.map((x)=>(
+                        {randomArray.map((x,index)=>(
                     <Card
                         className="mb-2"
                         size="small"
                         tabBarExtraContent={<div className="dot-pos">Tweet</div>}>
-
                         <div className="ant-input-wrapper ant-input-group">
-                            <span className="ant-input-group-addon">1</span>
-                            <Field as={TextArea} prefix="" name='tweet' placeholder="Tweet" autoSize={{ minRows: 0, maxRows: 6 }} />
+                            <span className="ant-input-group-addon">{index+1}</span>
+                            <Field as={TextArea} prefix="" name='tweet' placeholder="Tweet" autoSize={{ minRows: 0, maxRows: 6}} value={values.tweets[x].content}  />
                             </div>
-                            {/* <Space style={{width:'100%'}}> */}
                             <div>
                                 <Row>
                                     <Col span={8}>
-                                        <Radio.Group onChange={onChange} value={value}>
+                                        <Radio.Group onChange={(e)=> setFieldValue( `tweets[${x}].Label`,e.target.value)} value={values.tweets[x].Label}>
                                             <Row>
                                                 <Col>
                                                     <Radio value={'racist'}>Racist</Radio>
@@ -75,28 +121,25 @@ const Home = () => {
                                             </Row>
                                         </Radio.Group>
                                     </Col>
-                                    {value =='racist' ? 
+                                    {values.tweets[x].Label =='racist' ? 
                                     <Col span={16}>
                                         Violence Intensity
-                                    <Radio.Group onChange={onChange} value={score}>
+                                    <Radio.Group onChange={(e)=> setFieldValue(`tweets[${x}].Hate_level`,e.target.value)} value={values.tweets[x].Hate_level}>
                                             <Row>
                                                 <Col>
-                                                    <Radio value={1}>1</Radio>
+                                                    <Radio value={'1'}>1</Radio>
                                                 </Col>
                                                 <Col>
-                                                    <Radio value={2}>2</Radio>
+                                                    <Radio value={'2'}>2</Radio>
                                                 </Col>
                                                 <Col>
-                                                    <Radio value={3}>3</Radio>
+                                                    <Radio value={'3'}>3</Radio>
                                                 </Col>
                                                 <Col>
-                                                    <Radio value={4}>4</Radio>
+                                                    <Radio value={'4'}>4</Radio>
                                                 </Col>
                                             </Row>
                                         </Radio.Group>
-                                        {/* <Dropdown.Button onClick={handleButtonClick} overlay={menu}>
-                                            Hate Level
-                                        </Dropdown.Button> */}
                                     </Col>:null}
                                 </Row>
                                 </div>
@@ -109,11 +152,9 @@ const Home = () => {
                     />
 
                     <Affix>
-                        <div className="d-flex justify-content-end mb-1">
+                        <div className="d-flex justify-content-center mb-1">
                             <Space>
-                                <Button type="primary" onClick={handleSubmit}>Save</Button>
-                                {/* <Button onClick={handleReset}>Reset All</Button> */}
-                                {/* <Button onClick={toggleLng}>Change LNG</Button> */}
+                                <Button type="primary" onClick={handleSubmit} disabled={!(isValid && dirty) }>Save</Button> {/*errors.name && touched.name && <div style={{color:'red',fontWeight:'bold'}}>{alert(errors.name)}</div>*/}
                             </Space>
                         </div>
                     </Affix>
