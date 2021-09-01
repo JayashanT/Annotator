@@ -6,7 +6,8 @@ import { Formik, Form, Field, FieldArray } from 'formik';
 const { TextArea, } = Input;
 
 const Home = () => {
-    const [value, setValue] = React.useState(1);
+    const [value, setValue] = React.useState('non-racist');
+    const [score, setScore] = React.useState('default');
 
     const onChange = e => {
         console.log('radio checked', e.target.value);
@@ -30,14 +31,11 @@ const Home = () => {
 
         <Formik
             initialValues={{
-                //   transEN: [props.translationEN?.[props.currentKey]],
-                //   transNO: [props.translationNO?.[props.currentKey]]
+                tweets:[1,2,3,4]
+
             }}
             onSubmit={values => {
-                //   const submitEN = { ...props.translationEN, [props.currentKey]: { ...values.transEN[0] } }
-                //   const submitNO = { ...props.translationNO, [props.currentKey]: { ...values.transNO[0] } }
-                //   props.saveTranslationsStart({ en: submitEN, no: submitNO, fileName: props.fileName });
-                //   setTabChange({})
+
             }
             }
             enableReinitialize>
@@ -48,6 +46,11 @@ const Home = () => {
                 setFieldValue
             }) => (
                 <Form onSubmit={handleSubmit}>
+                    <FieldArray
+                    name='tweets'
+                    render={arryHelpers=>(
+                    <div>
+                        {values.tweets.map((x)=>(
                     <Card
                         className="mb-2"
                         size="small"
@@ -72,9 +75,10 @@ const Home = () => {
                                             </Row>
                                         </Radio.Group>
                                     </Col>
+                                    {value =='racist' ? 
                                     <Col span={16}>
                                         Violence Intensity
-                                    <Radio.Group onChange={onChange} value={value}>
+                                    <Radio.Group onChange={onChange} value={score}>
                                             <Row>
                                                 <Col>
                                                     <Radio value={1}>1</Radio>
@@ -93,12 +97,16 @@ const Home = () => {
                                         {/* <Dropdown.Button onClick={handleButtonClick} overlay={menu}>
                                             Hate Level
                                         </Dropdown.Button> */}
-                                    </Col>
+                                    </Col>:null}
                                 </Row>
                                 </div>
                             {/* </Space> */}
                         
                     </Card>
+                    ))
+                    }
+                    </div>)}
+                    />
 
                     <Affix>
                         <div className="d-flex justify-content-end mb-1">
