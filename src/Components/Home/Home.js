@@ -86,7 +86,7 @@ const Home = () => {
         //     });
 
         var val;
-        while (array.length < 25) {
+        while (array.length < 40) {
             val = Math.floor(Math.random() * (data.length - 1)) + 1
             if (array.includes(val) === false) {
                 array.push(val)
@@ -300,6 +300,10 @@ const Home = () => {
                                                     </Row>
                                                 </div>
                                                 {/* </Space> */}
+
+                                                <div>
+                                                    <label>{values.tweets[x].Label_by_us} : {values.tweets[x].Hate_level_by_us}</label>
+                                                </div>
 
                                             </Card>
                                         ))
