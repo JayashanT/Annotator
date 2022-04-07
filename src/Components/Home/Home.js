@@ -302,7 +302,7 @@ const Home = () => {
                                                 {/* </Space> */}
 
                                                 <div>
-                                                    <label>{values.tweets[x].Label_by_us} : {values.tweets[x].Hate_level_by_us}</label>
+                                                    {/*<label>{values.tweets[x].Label_by_us} : {values.tweets[x].Hate_level_by_us}</label>*/}
                                                 </div>
 
                                             </Card>
