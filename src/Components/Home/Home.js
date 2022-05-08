@@ -1,5 +1,7 @@
 import React from 'react';
-import { Tooltip, Card, Affix, Space, Button, Input, Radio, Row, Col, message, Modal } from "antd";
+import { Tooltip, Card, Affix, Space, Button, Input, Radio, Row, Col, message, Modal, Dropdown, Menu, Select } from "antd";
+
+import { DownOutlined, SmileOutlined } from '@ant-design/icons';
 // import { UndoOutlined, SaveOutlined, SyncOutlined, UserOutlined } from "@ant-design/icons";
 import { Formik, Form, Field, FieldArray } from 'formik';
 import * as firebase from "firebase/app";
@@ -7,6 +9,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import axios from 'axios';
 // import * as Yup from "yup";
 import data from '../data/data.json';
+const { Option } = Select;
 
 let config = {
     // apiKey: "AIzaSyCla8phLkpyt7-XasW1F9BacqZHfVVE_iI",
@@ -33,6 +36,18 @@ const firebaseApp = firebase.initializeApp(config);
 const { TextArea, } = Input;
 
 const storage = getStorage();
+
+const menu = (
+    <Menu>
+        <Menu.Item key="Buddhism" value="s">
+            Buddhism
+        </Menu.Item>
+        <Menu.Item key="Muslim">
+            Muslim
+        </Menu.Item>
+        <Menu.Item key="Hindu">Hindu</Menu.Item>
+    </Menu>
+);
 
 const Home = () => {
     const [randomArray, setRandomArray] = React.useState([]);
@@ -105,7 +120,11 @@ const Home = () => {
     }
 
 
+    function handleChange(value) {
+        console.log(value);
+    }
 
+    var initial=data
     return (
         <div style={{ backgroundImage: `linear-gradient(to right,#DCE35B,#45B649)` }}>
 
@@ -129,27 +148,29 @@ const Home = () => {
                 </div>
             </Affix>
 
+
             <Formik
                 initialValues={{
-                    tweets: data
+                    tweets: data,
+                    name:null,
+                    Race:"Sinhala",
+                    Religion:"Buddhism",
 
                 }}
                 onSubmit={values => {
-                        
-                        
+                    console.log(values)
                     var jsonString = JSON.stringify(values);
-
                     var blob = new Blob([jsonString], { type: "application/json" })
                     const storage = getStorage(firebaseApp);
-                    var fileRef = ref(storage, `/files/${values?.name}_${values?.race}_${values?.religion}_${Date().toLocaleString()}.json`)
-                    const hide = message.loading({content:'Submitting..',duration:0,style:{marginTop: '10vh',color:'#007FFF'},})
+                    var fileRef = ref(storage, `/files/${values?.name}_${values?.Race}_${values?.Religion}.json`)
+                    const hide = message.loading({ content: 'Submitting..', duration: 0, style: { marginTop: '10vh', color: '#007FFF' }, })
                     uploadBytes(fileRef, blob).then((snapshot) => {
                         setTimeout(hide);
-                        message.success({content:'Submitted. Thank You !..',duration:8,style:{marginTop: '10vh',color:'#007FFF'},})
-                        message.loading({content:'Refreshing...',duration:5,style:{color:'#007FFF'},})
-                        
-                    }).then(()=>setTimeout(window.location.reload(),5000)).catch(e => console.log(e));
-                    
+                        message.success({ content: 'Submitted. Thank You !..', duration: 8, style: { marginTop: '10vh', color: '#007FFF' }, })
+                        message.loading({ content: 'Refreshing...', duration: 5, style: { color: '#007FFF' }, })
+
+                    }).then(() => setTimeout(window.location.reload(), 5000)).catch(e => console.log(e));
+
                 }
                 }
                 // validationSchema={Yup.object().shape({
@@ -245,9 +266,36 @@ const Home = () => {
                             <div style={{ marginTop: '5px', marginLeft: '15px' }}>
 
 
-                                <Row><Col span={5}><label style={{ margin: '5px', fontWeight: 'bold', color: 'white' }}>Name </label></Col><Col span={18}><Field prefix="Name" name='name' placeholder="Name" validate={validateText} style={{ width: '60%', margin: '5px', borderRadius: '20px' }} /> {errors.name && touched.name && <div style={{ color: 'red', fontWeight: 'bold' }}>{errors.name}</div>}</Col></Row>
-                                <Row><Col span={5}><label style={{ margin: '5px', fontWeight: 'bold', color: 'white' }}>Race </label></Col><Col span={18}><Field prefix="" name='race' placeholder="Race" validate={validateText} style={{ width: '60%', margin: '5px', borderRadius: '20px' }} />{errors.race && touched.race && <div style={{ color: 'red', fontWeight: 'bold' }}>{errors.race}</div>}</Col></Row>
-                                <Row><Col span={5}><label style={{ margin: '5px', fontWeight: 'bold', color: 'white' }}>Religion </label></Col><Col span={18}><Field prefix="" name='religion' placeholder="Religion" validate={validateText} style={{ width: '60%', margin: '5px', borderRadius: '20px' }} />{errors.religion && touched.religion && <div style={{ color: 'red', fontWeight: 'bold' }}>{errors.religion}</div>}</Col></Row>
+                                <Row><Col span={5}><label style={{ margin: '5px', fontWeight: 'bold', color: 'white' }}>Name </label></Col><Col span={18}><Field prefix="Name" name='name' placeholder="Name" validate={validateText} style={{ width: '60%', }} /> {errors.name && touched.name && <div style={{ color: 'red', fontWeight: 'bold' }}>{errors.name}</div>}</Col></Row>
+                                <Row><Col span={5}><label style={{ margin: '5px', fontWeight: 'bold', color: 'white' }}>Race </label></Col><Col span={18}>
+                                    {errors.race && touched.race && <div style={{ color: 'red', fontWeight: 'bol' }}>{errors.race}</div>}
+                                    <Select defaultValue="Sinhala" style={{ width: 120 }} onChange={(value) => setFieldValue("Race", value)}>
+                                        <Option value="Sinhala">Sinhala</Option>
+                                        <Option value="Tamil">Tamil</Option>
+                                        <Option value="Muslim">Muslim</Option>
+                                        <Option value="Burgher">Burgher</Option>
+                                        <Option value="Other">Other</Option>
+                                    </Select>
+                                </Col>
+                                </Row>
+                                <Row><Col span={5}><label style={{ margin: '5px', fontWeight: 'bold', color: 'white' }}>Religion </label></Col><Col span={18}>
+                                    <Select defaultValue="Buddhism" style={{ width: 120 }} onChange={(value) => setFieldValue("Religion", value)}>
+                                        <Option value="Buddhism">Buddhism</Option>
+                                        <Option value="Hindu">Hindu</Option>
+                                        <Option value="Christian">Christian</Option>
+                                        <Option value="Islam">Islam</Option>
+                                        <Option value="Other">Other</Option>
+                                    </Select>
+                                </Col>
+                                </Row>
+                                <Affix>
+                                    <div className="d-flex justify-content-center mb-1" style={{ paddingBottom: 10 }}>
+                                        <Space>
+                                            <Button type="primary" onClick={handleSubmit} disabled={!(isValid && dirty)}>Save</Button> {/*errors.name && touched.name && <div style={{color:'red',fontWeight:'bold'}}>{alert(errors.name)}</div>*/}
+                                        </Space>
+                                    </div>
+                                </Affix>
+
                             </div>
 
                             <FieldArray
@@ -255,6 +303,8 @@ const Home = () => {
                                 render={arryHelpers => (
                                     <div>
                                         {randomArray.map((x, index) => (
+                                            data[x].Label = data[x].Label_by_us,
+                                            data[x].Hate_level = data[x].Hate_level_by_us,
                                             <Card
                                                 className="mb-2"
                                                 size="small"
@@ -266,7 +316,7 @@ const Home = () => {
                                                 <div>
                                                     <Row>
                                                         <Col span={9}>
-                                                            <Radio.Group id="racistGroup" onChange={(e) => setFieldValue(`tweets[${x}].Label`, e.target.value)} value={values.tweets[x].Label}>
+                                                            <Radio.Group id="racistGroup" onChange={(e) => setFieldValue(`tweets[${x}].Label`, e.target.value)} value={values.tweets[x].Label_by_us}>
                                                                 <Row>
                                                                     <Col>
                                                                         <Radio value={'racist'} style={{ fontWeight: 'bold', color: 'red' }}>Racist</Radio>
@@ -280,7 +330,7 @@ const Home = () => {
                                                         {values.tweets[x].Label == 'racist' ?
                                                             <Col span={15}>
                                                                 <div style={{ fontWeight: 'bold', marginBottom: 2 }}> Violence Intensity</div>
-                                                                <Radio.Group onChange={(e) => setFieldValue(`tweets[${x}].Hate_level`, e.target.value)} value={values.tweets[x].Hate_level}>
+                                                                <Radio.Group onChange={(e) => setFieldValue(`tweets[${x}].Hate_level`, e.target.value)} value={values.tweets[x].Hate_level_by_us}>
                                                                     <Row>
                                                                         <Col>
                                                                             <Radio value={'1'}>1</Radio>
@@ -311,13 +361,7 @@ const Home = () => {
                                     </div>)}
                             />
 
-                            <Affix>
-                                <div className="d-flex justify-content-center mb-1" style={{ paddingBottom: 10 }}>
-                                    <Space>
-                                        <Button type="primary" onClick={handleSubmit} disabled={!(isValid && dirty)}>Save</Button> {/*errors.name && touched.name && <div style={{color:'red',fontWeight:'bold'}}>{alert(errors.name)}</div>*/}
-                                    </Space>
-                                </div>
-                            </Affix>
+
                         </div>
                     </Form>
                 )
